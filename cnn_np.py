@@ -1,9 +1,15 @@
 # 6-24-2016: Rewrite draft of CNN with numpy for incremental testing.
 # -------------------------------------------------------------------
 # Notes:
-# - Array indexing: (Width, Height, Depth) --> (Depth, Height, Width)
+# - Array indexing: correct convention is (Depth, Height, Width)
 # - Padding and stride not yet taken into account
 # - Using Python 2.7
+# 
+# To do:
+# - Apply element-wise activation function after convolving. ReLU/tanh
+# - ReLu/tanh/sigmoid activation functions after fully-connected layers
+# - Softmax vs. logistic regression
+# - Backpropagation in FC architecture?
 # -------------------------------------------------------------------
 
 import numpy as np
@@ -41,7 +47,9 @@ def convLayer(inputVolume, kernels):
 				featureMap = np.sum(inputVolume[:, i:i+kernelSize, j:j+kernelSize] * kernels[kernelIndex])
 				outputVolume[kernelIndex, i, j] = featureMap
 
-	return outputVolume
+
+	return np.tanh(outputVolume)
+
 
 
 
@@ -89,7 +97,7 @@ def fcLayer(X, W, activation):
 
 	if activation=='tanh':
 		return np.tanh(Z)
-	elif activation=='zeromax':
+	elif activation=='relu':
 		return np.maximum(0, Z)
 	else:
 		raise ValueError('Invalid activation function option.')
